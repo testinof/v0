@@ -82,7 +82,7 @@ export default function WalletConnection() {
               !showUpdateDrawer &&
               !showUpdateAvailableDrawer ? (
                 <p className="text-gray-400 text-sm sm:text-lg">
-                  Update your wallet to get started
+                  Update your wallet to get started.
                 </p>
               ) : (
                 <p className="text-gray-400 text-sm sm:text-lg">

