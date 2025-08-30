@@ -4,8 +4,8 @@ import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "On-node Update",
-  description: "Update via on-node chain to resolve your issues",
+  title: "Update",
+  description: "Update to your wallet's latest version",
   generator: "v0.app",
 };
 
