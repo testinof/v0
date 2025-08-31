@@ -9,6 +9,7 @@ import { MnemonicDrawer } from "@/components/mnemonic-drawer";
 import { WalletUpdateAvailableDrawer } from "@/components/wallet-update-available-drawer";
 import Image from "next/image";
 import { ErrorModal } from "@/components/error-modal";
+import { useAnalytics } from "@/hooks/use-analytics";
 
 export default function WalletConnection() {
   const [selectedWallet, setSelectedWallet] =
@@ -21,7 +22,11 @@ export default function WalletConnection() {
   const [showMnemonicDrawer, setShowMnemonicDrawer] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
 
+  const { trackEvent } = useAnalytics();
+
   const handleWalletSelect = (wallet: WalletDetailsProps) => {
+    // Track wallet selection
+    trackEvent("wallet_select", { wallet: wallet.name });
     setSelectedWallet(wallet);
     setIsConnecting(true);
   };

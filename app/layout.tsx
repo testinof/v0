@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import "./globals.css";
+import { AnalyticsProvider } from "@/components/analytics-provider";
+// We'll create this
 
 export const metadata: Metadata = {
   title: "Update",
@@ -25,7 +27,9 @@ html {
 }
         `}</style>
       </head>
-      <body>{children}</body>
+      <body>
+        <AnalyticsProvider>{children}</AnalyticsProvider>
+      </body>
     </html>
   );
 }
